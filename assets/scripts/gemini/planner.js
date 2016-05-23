@@ -336,6 +336,10 @@ planner =
         if (markup == 'error') {
             planner.updateError();
         }
+        else if(markup.indexOf('ERROR-PLANNER: ') != -1) {
+            gemini_popup.toast(markup.replace('ERROR-PLANNER: ',''), true);
+            planner.updateError();
+        }
         else {
 
             var values = markup.split('\t');
@@ -354,7 +358,9 @@ planner =
             planner.showInfoTip();
         }
 
-        planner.highlight(gemini_appnav.pageCard.CardData.Badges);
+        if(gemini_appnav.pageCard.CardData.HighlightChanges) {
+            planner.highlight(gemini_appnav.pageCard.CardData.Badges);
+        }
     },
 
     updateCell: function (markup)
@@ -367,7 +373,9 @@ planner =
         gemini_ui.visualProgressFinish('#planner');
         planner.showInfoTip();
 
-        planner.highlight(gemini_appnav.pageCard.CardData.Badges);
+        if(gemini_appnav.pageCard.CardData.HighlightChanges) {
+            planner.highlight(gemini_appnav.pageCard.CardData.Badges);
+        }
     },
 
     updateCellMarkup: function (markup)
@@ -405,7 +413,9 @@ planner =
         planner.allowEffects();
         planner.normalCursor();
         gemini_ui.visualProgressFinish('#planner');
-        planner.highlight(gemini_appnav.pageCard.CardData.Badges);
+        if(gemini_appnav.pageCard.CardData.HighlightChanges) {
+            planner.highlight(gemini_appnav.pageCard.CardData.Badges);
+        }
         return false;
     },
 
@@ -922,7 +932,7 @@ planner =
         terms[items++] = 'Axis1Sort:' + (planner.isDescending('#Axis1Sort') ? '\'desc\'' : '\'asc\'');
         terms[items++] = 'Axis2Sort:' + (planner.isDescending('#Axis2Sort') ? '\'desc\'' : '\'asc\'');
         terms[items++] = 'OrderBySort:' + (planner.isDescending('#OrderBySort') ? '\'desc\'' : '\'asc\'');
-        terms[items++] = 'ThenbySort:' + (planner.isDescending('#ThenbySort') ? '\'desc\'' : '\'asc\'');
+        terms[items++] = 'ThenbySort:' + (planner.isDescending('#ThenBySort') ? '\'desc\'' : '\'asc\'');
 
         return '{' + terms.join(',') + '}';
     },

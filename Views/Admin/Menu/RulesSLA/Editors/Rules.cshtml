@@ -32,6 +32,13 @@
                             <textarea id="Description" name="Description" class="input-field required input-size9" rows="3">@Model.Description</textarea>
                         </td>
                     </tr>
+                    <tr>
+                        <td class="field-name">
+                        </td>
+                        <td>
+                            <input type="checkbox" id="Enabled" name="Enabled" class="fancy" @if (Model.Enabled) {<text>checked="checked"</text> } /><label for="Enabled">Enabled</label>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         }
@@ -47,14 +54,23 @@
                                 <option value="Commented">Commented</option>
                                 <option value="CommentSource">Comment Source</option>
                                 <option value="CommentSourceType">Comment Source Type</option>
+                                <option value="Component">Component</option>
+                                <option value="CreatedDate">Created Date</option>
                                 <option value="Description">Description</option>
                                 <option value="DueDate">Due Date</option>
                                 <option value="EmailsCount">Emails Count</option>
+                                <option value="EstimatedTime">Estimated Time</option>
+                                <option value="ExcessTime">Excess Time</option>
                                 <option value="Issue">Issue</option>
+                                <option value="LoggedTime">Logged Time</option>
                                 <option value="Priority">Priority</option>
                                 <option value="Project">Project</option>
+                                <option value="ProjectLabel">Project Label</option>
+                                <option value="RemainingTime">Remaining Time</option>
+                                <option value="ReportedBy">Reported By</option>
                                 <option value="Resolution">Resolution</option>
                                 <option value="Resource">Resource</option>
+                                <option value="RevisedDate">Revised Date</option>
                                 <option value="Severity">Severity</option>
                                 <option value="Source">Source</option>
                                 <option value="SourceType">Source Type</option>
@@ -66,6 +82,9 @@
                                 <option value="SLATimePassed">SLA Time Passed</option>
                                 <option value="Title">Title</option>
                                 <option value="Type">Type</option>
+                                <option value="User">User's Group</option>
+                                <option value="Version">Version</option>
+                                <option value="Organization">User's Organization</option>
                                 @foreach (var cf in Model.CustomFields)
                                 {
                                     <option value="@cf.Key">@cf.Value</option>
@@ -126,6 +145,7 @@
                                 <option value="SetField">Set Field</option>
                                 <option value="SetCustomField">Set Custom Field</option>
                                 <option value="VetoAction">Veto Action</option>
+                                <option value="SwitchSLA">Switch SLA to</option>
                                 <option value="StopClock">Stop Clock</option>
                                 <option value="PauseClock">Pause Clock</option>
                                 <option value="ResumeClock">Resume Clock</option>
@@ -154,7 +174,7 @@
                                         {
                                             <tr>
                                                 <td class="hide"></td>
-                                                <td>@(EnumHelper.FromCamel(action.Type))&nbsp;@Model.ActionParameters[aid++]<div class="action-button-delete cursor-pointer right type-action margin-left" title="Delete" data-id="@(++actionIndex)"></div></td>
+                                                <td>@(action.Type == Countersoft.Gemini.Commons.Entity.SLA.Action.ActionType.SwitchSLA ? "Switch SLA" : EnumHelper.FromCamel(action.Type))&nbsp;@Model.ActionParameters[aid++]<div class="action-button-delete cursor-pointer right type-action margin-left" title="Delete" data-id="@(++actionIndex)"></div></td>
                                             </tr>
                                         }
                                     }
@@ -258,7 +278,8 @@
         }
         else if($('#action-type option:selected').val() == 'SetField')
         {
-            if($('#action-fields option:selected', '#action-parameter-container').val() == "DueDate" || $('#action-fields option:selected', '#action-parameter-container').val() == "StartDate")
+            if($('#action-fields option:selected', '#action-parameter-container').val() == "DueDate" || $('#action-fields option:selected', '#action-parameter-container').val() == "StartDate" || $('#action-fields option:selected', '#action-parameter-container').val() == "PercentComplete" 
+                || $('#action-fields option:selected', '#action-parameter-container').val() == "CreatedDate" || $('#action-fields option:selected', '#action-parameter-container').val() == "RevisedDate")
             {
                 value =  [$('#action-fields option:selected', '#action-parameter-container').val(), $('#rule-value', '#action-parameter-container').val()];
                 textValue = $('#action-fields option:selected', '#action-parameter-container').text() + ' to ' + $('#rule-value', '#action-parameter-container').val();
@@ -280,6 +301,19 @@
             {
                 value =  [$('#action-fields option:selected', '#action-parameter-container').text(), $('#parameter-values option:selected', '#action-parameter-container').val()];
                 textValue = $('#action-fields option:selected', '#action-parameter-container').text() + ' to ' + $('#parameter-values option:selected', '#action-parameter-container').text();
+            }
+        }
+        else if(gemini_commons.endsWith($('#action-type option:selected').val(), 'SwitchSLA'))
+        {
+            if($('select', '#action-parameter-container').length)
+            {
+                value =  [$('#parameter-values option:selected', '#action-parameter-container').val(), $('#switchsla-clock option:selected', '#action-parameter-container').val()];
+                textValue = $('#parameter-values option:selected', '#action-parameter-container').text() + ' and clock will be ' +  $('#switchsla-clock option:selected', '#action-parameter-container').text();
+            }
+            else if($('input', '#action-parameter-container').length)
+            {
+                value = [$('input', '#action-parameter-container').val()];
+                textValue = value;
             }
         }
         else
